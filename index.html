@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LaporanLes — Catatan Belajar Digital</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.8.0/Recharts.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#F7F5F0;color:#1A1A2E;min-height:100vh;}
+input,select,textarea,button{font-family:'DM Sans',sans-serif;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#2D6A4F!important;box-shadow:0 0 0 3px rgba(45,106,79,.08);}
+textarea{resize:vertical;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#F0EDE8;}::-webkit-scrollbar-thumb{background:#E5E0D5;border-radius:4px;}
+
+.fadein{animation:fi .3s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Buttons */
+.btn-p{background:#2D6A4F;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-p:hover{background:#235A40;transform:translateY(-1px);box-shadow:0 4px 14px rgba(45,106,79,.3);}
+.btn-s{background:transparent;color:#2D6A4F;border:2px solid #2D6A4F;padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-s:hover{background:#EDF7F1;}
+.btn-wa{background:#25D366;color:#fff;border:none;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;}
+.btn-wa:hover{background:#1aab52;transform:translateY(-1px);}
+.btn-danger{background:none;border:2px solid #DC2626;color:#DC2626;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-danger:hover{background:#FEF2F2;}
+.btn-submit{background:#2D6A4F;color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:8px;transition:all .2s;}
+.btn-submit:hover:not(:disabled){background:#235A40;box-shadow:0 6px 20px rgba(45,106,79,.35);}
+.btn-submit:disabled{background:#52B788;cursor:default;}
+
+/* Header */
+header{background:#fff;border-bottom:1px solid #E5E0D5;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.hdr{max-width:960px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-title{font-family:'Lora',serif;font-weight:700;font-size:17px;color:#2D6A4F;}
+.logo-sub{font-size:11px;color:#6B7280;}
+nav{display:flex;gap:6px;flex-wrap:wrap;}
+.nb{background:transparent;border:none;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#6B7280;font-weight:500;transition:all .15s;}
+.nb:hover{background:#f0f0f0;}
+.nb.on{background:#EDF7F1;color:#2D6A4F;font-weight:700;}
+
+main{max-width:960px;margin:0 auto;padding:24px 16px;}
+
+/* Hero */
+.hero{text-align:center;padding:48px 20px 40px;background:linear-gradient(135deg,#EDF7F1 0%,#FFF9E6 100%);border-radius:20px;margin-bottom:24px;border:1px solid #E5E0D5;}
+.hero-badge{display:inline-block;background:#52B788;color:#fff;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
+.hero-title{font-family:'Lora',serif;font-size:clamp(26px,5vw,42px);font-weight:700;line-height:1.25;margin-bottom:14px;}
+.hero-accent{color:#2D6A4F;}
+.hero-desc{font-size:15px;color:#6B7280;max-width:480px;margin:0 auto 26px;line-height:1.6;}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:580px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:#fff;border-radius:14px;padding:18px 12px;text-align:center;border:1px solid #E5E0D5;}
+.stat-icon{font-size:22px;margin-bottom:6px;}
+.stat-val{font-family:'Lora',serif;font-size:26px;font-weight:700;color:#2D6A4F;}
+.stat-lbl{font-size:11px;color:#6B7280;margin-top:3px;}
+
+.sec-title{font-family:'Lora',serif;font-size:20px;font-weight:700;margin-bottom:16px;}
+
+/* Report card */
+.r-card{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #E5E0D5;box-shadow:0 2px 6px rgba(0,0,0,.04);cursor:pointer;transition:all .2s;}
+.r-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.09);}
+.subj-badge{background:#EDF7F1;color:#2D6A4F;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;}
+
+/* Form card */
+.card{background:#fff;border-radius:20px;padding:28px 24px;border:1px solid #E5E0D5;box-shadow:0 4px 16px rgba(0,0,0,.05);}
+.card-head{margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #E5E0D5;}
+.card-title{font-family:'Lora',serif;font-size:22px;font-weight:700;}
+.card-sub{color:#6B7280;font-size:13px;margin-top:5px;}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0 18px;}
+.f-group{margin-bottom:18px;}
+.f-lbl{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#1A1A2E;}
+.f-inp{width:100%;padding:10px 13px;border:1.5px solid #E5E0D5;border-radius:10px;font-size:14px;color:#1A1A2E;background:#FAFAF8;transition:all .2s;}
+.f-inp.hl{background:#FFFDF0;border-color:#D4A853;}
+.req{color:#DC2626;}
+
+/* Subject pills */
+.pill-on{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #2D6A4F;background:#2D6A4F;color:#fff;transition:all .15s;}
+.pill-off{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #E5E0D5;background:#FAFAF8;color:#6B7280;transition:all .15s;}
+.pill-off:hover{border-color:#2D6A4F;color:#2D6A4F;}
+
+/* Star rating */
+.star-btn{font-size:26px;background:none;border:none;cursor:pointer;padding:2px;transition:transform .15s;line-height:1;}
+
+/* ── Image Upload ─────────────────────────── */
+.img-drop{border:2px dashed #E5E0D5;border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFAF8;position:relative;}
+.img-drop:hover,.img-drop.drag{border-color:#2D6A4F;background:#EDF7F1;}
+.img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-drop-icon{font-size:32px;margin-bottom:8px;}
+.img-drop-txt{font-size:14px;font-weight:600;color:#6B7280;}
+.img-drop-sub{font-size:12px;color:#9CA3AF;margin-top:4px;}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px;}
+.img-thumb{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:1px solid #E5E0D5;background:#F0EDE8;}
+.img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.img-thumb-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.img-thumb-del:hover{background:rgba(220,38,38,.8);}
+.img-count{font-size:12px;color:#9CA3AF;margin-top:8px;}
+
+/* Image gallery in detail */
+.img-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:4px;}
+.img-gallery-item{border-radius:12px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;border:1px solid #E5E0D5;}
+.img-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s;}
+.img-gallery-item:hover img{transform:scale(1.04);}
+
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fi .2s ease;}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
+.lightbox-close{position:fixed;top:18px;right:22px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;cursor:pointer;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;}
+
+/* Detail */
+.d-box{background:#F7F5F0;border-radius:12px;padding:14px 10px;text-align:center;}
+.d-lbl{font-size:10px;color:#9CA3AF;text-transform:uppercase;font-weight:700;letter-spacing:.5px;margin-bottom:4px;}
+.d-val{font-size:13px;font-weight:700;}
+.d-block{background:#F7F5F0;border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+.d-block.hl{background:#FFF9E6;border-left:4px solid #D4A853;}
+.d-block-title{font-weight:700;font-size:14px;margin-bottom:8px;}
+.d-block-content{font-size:14px;line-height:1.75;color:#374151;white-space:pre-wrap;}
+
+/* Charts */
+.chart-card{background:#fff;border-radius:16px;padding:20px 18px;border:1px solid #E5E0D5;margin-bottom:16px;}
+.chart-title{font-family:'Lora',serif;font-size:16px;font-weight:700;margin-bottom:16px;}
+.ses-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ses-table th{text-align:left;padding:8px 10px;color:#6B7280;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #E5E0D5;}
+.ses-table td{padding:10px;border-bottom:1px solid #F0EDE8;}
+.ses-table tr:hover td{background:#FAFAF8;cursor:pointer;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2D6A4F;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;animation:fi .3s ease;}
+.toast.err{background:#DC2626;}
+.empty{text-align:center;padding:60px 20px;}
+.back-btn{background:none;border:none;color:#2D6A4F;font-size:15px;cursor:pointer;font-weight:700;margin-bottom:16px;padding:0;display:inline-flex;align-items:center;gap:4px;}
+.legend{display:flex;gap:16px;justify-content:center;margin-top:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;}
+.leg-dot{width:16px;height:3px;border-radius:2px;display:inline-block;}
+.edited-badge{background:#FFF9E6;color:#D4A853;border:1px solid rgba(212,168,83,.25);border-radius:6px;padding:2px 8px;font-weight:600;font-size:12px;}
+
+/* r-card thumbnail */
+.r-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid #E5E0D5;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis } = Recharts;
+
+// ── Constants ──────────────────────────────────────────────────────────────
+const SUBJECTS = ["IPAS","Bahasa Indonesia","Bahasa Inggris","Matematika","Agama","Pancasila","Bahasa Jawa","Biologi","Fisika","Kimia","Membaca","Menulis","Lainnya"];
+const MOODS    = ["😊 Sangat Antusias","🙂 Semangat","😐 Biasa Saja","😴 Kurang Fokus","😓 Kesulitan"];
+const MOOD_S   = {"😊 Sangat Antusias":5,"🙂 Semangat":4,"😐 Biasa Saja":3,"😴 Kurang Fokus":2,"😓 Kesulitan":1};
+const UND_LBL  = ["","Perlu bimbingan lebih","Masih perlu latihan","Cukup paham","Paham dengan baik","Sangat paham!"];
+const MAX_IMG  = 5;
+const IMG_W    = 900; // max px after compress
+
+function todayStr(){ return new Date().toISOString().split("T")[0]; }
+const INIT = { studentName:"", subjects:[], date:todayStr(), duration:"60", topics:"", mood:"", understanding:3, homework:"", notes:"", nextSession:"", teacherName:"", images:[] };
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function fmtDate(d){ if(!d) return ""; return new Date(d+"T00:00:00").toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"}); }
+function fmtShort(d){ if(!d) return ""; return new Date(d+"T00:00:00").toLocaleDateString("id-ID",{day:"2-digit",month:"short"}); }
+function stars(n){ return "⭐".repeat(n||0); }
+function normR(r){ return {...r, subjects:r.subjects?.length?r.subjects:(r.subject?[r.subject]:[]), images:r.images||[]}; }
+function getSubjs(r){ return r.subjects?.length?r.subjects:(r.subject?[r.subject]:["—"]); }
+function subjLabel(r){ return getSubjs(r).filter(s=>s!=="—").join(" · ")||"—"; }
+
+// ── Compress image to base64 ───────────────────────────────────────────────
+function compressImage(file){ 
+  return new Promise((res)=>{
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width, h = img.height;
+        if(w > IMG_W){ h = Math.round(h*IMG_W/w); w = IMG_W; }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+        res(canvas.toDataURL("image/jpeg",0.78));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Storage ────────────────────────────────────────────────────────────────
+function loadReports(){ try{ return JSON.parse(localStorage.getItem("ll_v4")||"[]"); }catch{ return []; } }
+function saveReports(d){ try{ localStorage.setItem("ll_v4",JSON.stringify(d)); }catch(e){ alert("Penyimpanan penuh! Coba hapus beberapa laporan lama atau kurangi jumlah foto."); } }
+
+// ── PDF download (with images) ─────────────────────────────────────────────
+function downloadPDF(r){
+  const nr   = normR(r);
+  const subj = getSubjs(nr).map(s=>`<span class="sb">${s}</span>`).join("");
+  const imgSection = nr.images.length
+    ? `<div class="sec"><div class="st">📷 Foto Dokumentasi</div><div class="img-grid">${nr.images.map(src=>`<img src="${src}" style="width:100%;max-width:200px;border-radius:8px;margin:4px;"/>`).join("")}</div></div>`
+    : "";
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#fff;color:#1A1A2E;padding:36px;max-width:720px;margin:0 auto;}
+  .hd{display:flex;justify-content:space-between;border-bottom:3px solid #2D6A4F;padding-bottom:18px;margin-bottom:24px;}
+  .logo{font-family:'Lora',serif;font-size:21px;font-weight:700;color:#2D6A4F;}.ls{font-size:12px;color:#6B7280;margin-top:3px;}
+  .dt{text-align:right;font-size:13px;color:#6B7280;}.dn{font-weight:700;color:#1A1A2E;font-size:14px;}
+  h1{font-family:'Lora',serif;font-size:26px;font-weight:700;margin-bottom:6px;}
+  .teacher{font-size:14px;color:#6B7280;margin-bottom:16px;}
+  .badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
+  .sb{background:#EDF7F1;color:#2D6A4F;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+  .ib{background:#F7F5F0;border-radius:10px;padding:12px;text-align:center;}
+  .il{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6B7280;font-weight:600;margin-bottom:4px;}
+  .iv{font-size:14px;font-weight:700;}
+  .sec{background:#F7F5F0;border-radius:10px;padding:16px;margin-bottom:12px;}
+  .sec.hl{background:#FFF9E6;border-left:4px solid #D4A853;}
+  .st{font-weight:700;font-size:13px;margin-bottom:7px;}
+  .sc{font-size:13px;line-height:1.7;color:#374151;white-space:pre-wrap;}
+  .img-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .ft{margin-top:28px;padding-top:14px;border-top:1px solid #E5E0D5;display:flex;justify-content:space-between;font-size:11px;color:#9CA3AF;}
+  @media print{body{padding:20px;}}</style></head><body>
+  <div class="hd"><div><div class="logo">✏️ LaporanLes</div><div class="ls">Catatan Belajar Digital</div></div>
+  <div class="dt"><div class="dn">${fmtDate(nr.date)}</div><div>Pengajar: ${nr.teacherName}</div></div></div>
+  <h1>${nr.studentName}</h1><div class="teacher">Pengajar: ${nr.teacherName}</div>
+  <div class="badges">${subj}</div>
+  <div class="g3">
+    <div class="ib"><div class="il">Durasi</div><div class="iv">⏱️ ${nr.duration} menit</div></div>
+    <div class="ib"><div class="il">Kondisi</div><div class="iv">${nr.mood||"—"}</div></div>
+    <div class="ib"><div class="il">Pemahaman</div><div class="iv">${stars(nr.understanding)}</div></div>
+  </div>
+  ${nr.topics?`<div class="sec"><div class="st">📖 Materi yang Dipelajari</div><div class="sc">${nr.topics}</div></div>`:""}
+  ${nr.homework?`<div class="sec"><div class="st">✏️ Tugas / PR</div><div class="sc">${nr.homework}</div></div>`:""}
+  ${nr.notes?`<div class="sec hl"><div class="st">💬 Catatan untuk Orang Tua</div><div class="sc">${nr.notes}</div></div>`:""}
+  ${nr.nextSession?`<div class="sec"><div class="st">📅 Rencana Pertemuan Berikutnya</div><div class="sc">${nr.nextSession}</div></div>`:""}
+  ${imgSection}
+  <div class="ft"><div>LaporanLes — Catatan Belajar Digital</div><div>Dicetak ${new Date().toLocaleDateString("id-ID")}</div></div>
+  </body></html>`;
+  const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=`laporan-${(nr.studentName||"siswa").replace(/\s+/g,"-").toLowerCase()}-${nr.date}.html`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+// ── WhatsApp ───────────────────────────────────────────────────────────────
+function shareWA(r){
+  const nr=normR(r);
+  const msg=`📚 *LAPORAN BELAJAR*\n━━━━━━━━━━━━━━━\n👦 Siswa: *${nr.studentName}*\n📖 Mapel: *${subjLabel(nr)}*\n📅 Tanggal: ${fmtDate(nr.date)}\n⏱️ Durasi: ${nr.duration} menit\n\n💡 *Materi:*\n${nr.topics||"-"}\n\n🧠 *Pemahaman:* ${stars(nr.understanding)}\n${nr.mood?`😊 *Kondisi:* ${nr.mood}\n`:""}${nr.homework?`\n✏️ *PR/Tugas:*\n${nr.homework}\n`:""}${nr.notes?`\n💬 *Catatan Orang Tua:*\n${nr.notes}\n`:""}${nr.nextSession?`\n📅 *Pertemuan Berikutnya:*\n${nr.nextSession}\n`:""}${nr.images.length?`\n📷 Laporan ini memiliki ${nr.images.length} foto dokumentasi.\n`:""}\n━━━━━━━━━━━━━━━\n_Dikirim via LaporanLes_`;
+  window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");
+}
+
+// ── ImageUpload component ──────────────────────────────────────────────────
+function ImageUpload({images, onChange}){
+  const [drag,setDrag] = useState(false);
+  const inputRef = useRef();
+
+  const processFiles = async(files) => {
+    const remaining = MAX_IMG - images.length;
+    if(remaining<=0) return;
+    const toProcess = Array.from(files).slice(0,remaining);
+    const compressed = await Promise.all(toProcess.map(compressImage));
+    onChange([...images,...compressed]);
+  };
+
+  return(
+    <div className="f-group">
+      <label className="f-lbl">📷 Foto Dokumentasi <span style={{color:"#9CA3AF",fontWeight:400,fontSize:12}}>({images.length}/{MAX_IMG} foto, maks. 5)</span></label>
+
+      {images.length < MAX_IMG && (
+        <div className={"img-drop"+(drag?" drag":"")}
+          onDragOver={e=>{e.preventDefault();setDrag(true);}}
+          onDragLeave={()=>setDrag(false)}
+          onDrop={e=>{e.preventDefault();setDrag(false);processFiles(e.dataTransfer.files);}}
+          onClick={()=>inputRef.current.click()}>
+          <input ref={inputRef} type="file" accept="image/*" multiple
+            style={{display:"none"}}
+            onChange={e=>processFiles(e.target.files)}/>
+          <div className="img-drop-icon">🖼️</div>
+          <div className="img-drop-txt">Klik atau seret foto ke sini</div>
+          <div className="img-drop-sub">JPG, PNG, WEBP · Maks {MAX_IMG} foto</div>
+        </div>
+      )}
+
+      {images.length>0 && (
+        <div className="img-grid">
+          {images.map((src,i)=>(
+            <div key={i} className="img-thumb">
+              <img src={src} alt={`foto-${i+1}`}/>
+              <button className="img-thumb-del" onClick={()=>onChange(images.filter((_,j)=>j!==i))} title="Hapus foto">✕</button>
+            </div>
+          ))}
+        </div>
+      )}
+      {images.length>0 && <div className="img-count">{images.length} foto dipilih</div>}
+    </div>
+  );
+}
+
+// ── Sub-components ─────────────────────────────────────────────────────────
+function RCard({r,onClick}){
+  const nr=normR(r);
+  const thumb = nr.images?.[0];
+  return(
+    <div className="r-card" onClick={onClick}>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:6}}>
+          {nr.subjects.slice(0,3).map(s=><span key={s} className="subj-badge">{s}</span>)}
+          {nr.subjects.length>3&&<span className="subj-badge">+{nr.subjects.length-3}</span>}
+        </div>
+        <div style={{fontFamily:"'Lora',serif",fontSize:17,fontWeight:700}}>{r.studentName}</div>
+        <div style={{fontSize:13,color:"#6B7280",marginTop:3}}>{fmtDate(r.date)} · {r.duration} menit{nr.images.length>0?` · 📷 ${nr.images.length}`:""}</div>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+        {thumb && <img src={thumb} alt="thumb" className="r-thumb"/>}
+        <div style={{textAlign:"right"}}>
+          <div style={{fontSize:26}}>{r.mood?.split(" ")[0]||"📝"}</div>
+          <div style={{fontSize:13,color:"#D4A853",marginTop:2}}>{stars(r.understanding)}</div>
+          <div style={{fontSize:11,color:"#9CA3AF",marginTop:3}}>{r.teacherName}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DBlock({icon,title,content,hl}){
+  return(
+    <div className={"d-block"+(hl?" hl":"")}>
+      <div className="d-block-title">{icon} {title}</div>
+      <div className="d-block-content">{content}</div>
+    </div>
+  );
+}
+function FInput({label,req,type="text",val,onChange,placeholder}){
+  return(<div className="f-group"><label className="f-lbl">{label} {req&&<span className="req">*</span>}</label><input className="f-inp" type={type} value={val} onChange={e=>onChange(e.target.value)} placeholder={placeholder||""}/></div>);
+}
+function FSelect({label,val,onChange,options}){
+  return(<div className="f-group"><label className="f-lbl">{label}</label><select className="f-inp" value={val} onChange={e=>onChange(e.target.value)}><option value="">-- Pilih --</option>{options.map(o=><option key={o}>{o}</option>)}</select></div>);
+}
+function FTA({label,val,onChange,placeholder,hl}){
+  return(<div className="f-group"><label className="f-lbl">{label}</label><textarea className={"f-inp"+(hl?" hl":"")} style={{height:88}} value={val} onChange={e=>onChange(e.target.value)} placeholder={placeholder||""}/></div>);
+}
+
+// ── App ────────────────────────────────────────────────────────────────────
+function App(){
+  const [view,setView]      = useState("home");
+  const [form,setForm]      = useState({...INIT});
+  const [reports,setReports]= useState(loadReports);
+  const [selected,setSel]   = useState(null);
+  const [filterStu,setFilt] = useState("");
+  const [saved,setSaved]    = useState(false);
+  const [chartStu,setChartStu]=useState("");
+  const [toast,setToast]    = useState(null);
+  const [editingId,setEditId]=useState(null);
+  const [lightbox,setLB]    = useState(null); // src string
+
+  const showToast=(msg,type="ok")=>{setToast({msg,type});setTimeout(()=>setToast(null),3000);};
+  const persist=(d)=>{setReports(d);saveReports(d);};
+  const navTo=(v)=>{if(v==="form"){setForm({...INIT,date:todayStr()});setEditId(null);}setView(v);};
+
+  const handleSubmit=()=>{
+    if(!form.studentName||!form.subjects.length||!form.date||!form.teacherName){showToast("Lengkapi field wajib (*)!","err");return;}
+    let updated;
+    if(editingId){
+      updated=reports.map(r=>r.id===editingId?{...r,...form,updatedAt:new Date().toISOString()}:r);
+      showToast("Laporan diperbarui! ✅");
+    } else {
+      updated=[{...form,id:Date.now(),createdAt:new Date().toISOString()},...reports];
+      showToast("Laporan disimpan! ✅");
+    }
+    persist(updated);setSaved(true);
+    setTimeout(()=>{setSaved(false);setForm({...INIT,date:todayStr()});setEditId(null);setView("history");},1600);
+  };
+
+  const deleteReport=(id)=>{
+    if(!confirm("Hapus laporan ini?"))return;
+    persist(reports.filter(r=>r.id!==id));showToast("Laporan dihapus.");setView("history");
+  };
+
+  const openEdit=(r)=>{
+    const nr=normR(r);
+    setForm({studentName:nr.studentName,subjects:nr.subjects,date:nr.date,duration:nr.duration,topics:nr.topics||"",mood:nr.mood||"",understanding:nr.understanding||3,homework:nr.homework||"",notes:nr.notes||"",nextSession:nr.nextSession||"",teacherName:nr.teacherName,images:nr.images});
+    setEditId(nr.id);setView("form");
+  };
+
+  const students=[...new Set(reports.map(r=>r.studentName))];
+  const filtered=filterStu?reports.filter(r=>r.studentName===filterStu):reports;
+  const cName=chartStu||students[0]||"";
+  const cReports=reports.filter(r=>r.studentName===cName).sort((a,b)=>a.date.localeCompare(b.date));
+  const lineData=cReports.map(r=>({date:fmtShort(r.date),pemahaman:r.understanding,semangat:MOOD_S[r.mood]||3}));
+  const subCount={};
+  cReports.forEach(r=>{getSubjs(r).filter(s=>s!=="—").forEach(s=>{subCount[s]=(subCount[s]||0)+1;});});
+  const radarData=Object.entries(subCount).map(([s,v])=>({subject:s,value:v}));
+
+  return(<>
+    {/* Lightbox */}
+    {lightbox&&(
+      <div className="lightbox" onClick={()=>setLB(null)}>
+        <button className="lightbox-close" onClick={()=>setLB(null)}>✕</button>
+        <img src={lightbox} alt="foto" onClick={e=>e.stopPropagation()}/>
+      </div>
+    )}
+
+    {/* Toast */}
+    {toast&&<div className={"toast"+(toast.type==="err"?" err":"")}>{toast.msg}</div>}
+
+    <header>
+      <div className="hdr">
+        <div className="logo" onClick={()=>setView("home")}>
+          <span style={{fontSize:26}}>✏️</span>
+          <div><div className="logo-title">LaporanLes</div><div className="logo-sub">Catatan Belajar Digital</div></div>
+        </div>
+        <nav>
+          {[["home","🏠 Beranda"],["form","✏️ Buat"],["history","📋 Riwayat"],["charts","📊 Grafik"]].map(([v,l])=>(
+            <button key={v} className={"nb"+(view===v?" on":"")} onClick={()=>navTo(v)}>{l}</button>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      {/* ── HOME ── */}
+      {view==="home"&&<div className="fadein">
+        <div className="hero">
+          <div className="hero-badge">Untuk Pengajar Privat 🎓</div>
+          <h1 className="hero-title">Laporan Belajar<br/><span className="hero-accent">Profesional & Rapi</span></h1>
+          <p className="hero-desc">Catat perkembangan siswa, lampirkan foto, kirim ke orang tua via WhatsApp, dan pantau grafik kemajuan belajar.</p>
+          <div className="hero-btns">
+            <button className="btn-p" onClick={()=>navTo("form")}>✏️ Buat Laporan</button>
+            <button className="btn-s" onClick={()=>setView("history")}>📋 Riwayat</button>
+            <button className="btn-s" onClick={()=>setView("charts")}>📊 Grafik</button>
+          </div>
+        </div>
+        <div className="stats-row">
+          {[
+            {icon:"📝",val:reports.length,lbl:"Total Laporan"},
+            {icon:"👦",val:students.length,lbl:"Siswa"},
+            {icon:"📅",val:reports.filter(r=>r.date===todayStr()).length,lbl:"Hari Ini"},
+            {icon:"📷",val:reports.reduce((a,r)=>{const nr=normR(r);return a+nr.images.length;},0),lbl:"Total Foto"},
+          ].map((s,i)=>(
+            <div key={i} className="stat-card">
+              <div className="stat-icon">{s.icon}</div>
+              <div className="stat-val">{s.val}</div>
+              <div className="stat-lbl">{s.lbl}</div>
+            </div>
+          ))}
+        </div>
+        {reports.length>0?(
+          <div>
+            <div className="sec-title">Laporan Terbaru</div>
+            {reports.slice(0,3).map(r=><RCard key={r.id} r={r} onClick={()=>{setSel(r);setView("detail");}}/>)}
+          </div>
+        ):(
+          <div className="empty">
+            <div style={{fontSize:52,marginBottom:14}}>📚</div>
+            <div style={{color:"#6B7280",fontSize:16}}>Belum ada laporan. Mulai buat sekarang!</div>
+            <button className="btn-p" style={{marginTop:20}} onClick={()=>navTo("form")}>✏️ Buat Laporan Pertama</button>
+          </div>
+        )}
+      </div>}
+
+      {/* ── FORM ── */}
+      {view==="form"&&<div className="fadein">
+        <div className="card">
+          <div className="card-head">
+            <h2 className="card-title">{editingId?"✏️ Edit Laporan":"📝 Buat Laporan Pembelajaran"}</h2>
+            <p className="card-sub">{editingId?"Perbarui detail sesi belajar yang sudah tersimpan":"Isi detail sesi belajar hari ini"}</p>
+          </div>
+
+          <div className="f-grid">
+            <FInput label="Nama Pengajar" req val={form.teacherName} onChange={v=>setForm({...form,teacherName:v})} placeholder="Kak Dini"/>
+            <FInput label="Nama Siswa" req val={form.studentName} onChange={v=>setForm({...form,studentName:v})} placeholder="Budi Santoso"/>
+            <FInput label="Tanggal" req type="date" val={form.date} onChange={v=>setForm({...form,date:v})}/>
+            <FInput label="Durasi (menit)" type="number" val={form.duration} onChange={v=>setForm({...form,duration:v})}/>
+            <FSelect label="Kondisi Siswa" val={form.mood} onChange={v=>setForm({...form,mood:v})} options={MOODS}/>
+          </div>
+
+          {/* Multi-select mapel */}
+          <div className="f-group" style={{marginBottom:18}}>
+            <label className="f-lbl">Mata Pelajaran <span className="req">*</span> <span style={{color:"#9CA3AF",fontWeight:400,fontSize:12}}>(boleh lebih dari satu)</span></label>
+            <div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:6}}>
+              {SUBJECTS.map(s=>{
+                const on=form.subjects.includes(s);
+                return(<button key={s} type="button" className={on?"pill-on":"pill-off"}
+                  onClick={()=>{const nx=on?form.subjects.filter(x=>x!==s):[...form.subjects,s];setForm({...form,subjects:nx});}}>
+                  {on?"✓ ":""}{s}</button>);
+              })}
+            </div>
+            {form.subjects.length>0&&<div style={{marginTop:8,fontSize:12,color:"#2D6A4F",fontWeight:600}}>✓ Dipilih: {form.subjects.join(" · ")}</div>}
+          </div>
+
+          <FTA label="Materi yang Dipelajari" val={form.topics} onChange={v=>setForm({...form,topics:v})} placeholder="Persamaan kuadrat, faktorisasi, rumus ABC..."/>
+
+          {/* Star rating */}
+          <div className="f-group">
+            <label className="f-lbl">Pemahaman Siswa</label>
+            <div style={{display:"flex",alignItems:"center",gap:6}}>
+              {[1,2,3,4,5].map(n=>(
+                <button key={n} className="star-btn"
+                  style={{opacity:form.understanding>=n?1:0.22,transform:form.understanding>=n?"scale(1.12)":"scale(1)"}}
+                  onClick={()=>setForm({...form,understanding:n})}>⭐</button>
+              ))}
+              <span style={{fontSize:13,color:"#6B7280",marginLeft:6}}>{UND_LBL[form.understanding]}</span>
+            </div>
+          </div>
+
+          <FTA label="Tugas / PR" val={form.homework} onChange={v=>setForm({...form,homework:v})} placeholder="Tugas yang diberikan untuk dikerjakan di rumah..."/>
+          <FTA label="Catatan untuk Orang Tua" val={form.notes} onChange={v=>setForm({...form,notes:v})} placeholder="Perkembangan, hal yang perlu diperhatikan, saran..." hl/>
+          <FInput label="Rencana Pertemuan Berikutnya" val={form.nextSession} onChange={v=>setForm({...form,nextSession:v})} placeholder="Latihan soal cerita + pembahasan ulangan"/>
+
+          {/* IMAGE UPLOAD */}
+          <ImageUpload images={form.images} onChange={imgs=>setForm({...form,images:imgs})}/>
+
+          <button className="btn-submit" onClick={handleSubmit} disabled={saved}>
+            {saved?"✅ Tersimpan!":editingId?"💾 Simpan Perubahan":"💾 Simpan Laporan"}
+          </button>
+        </div>
+      </div>}
+
+      {/* ── HISTORY ── */}
+      {view==="history"&&<div className="fadein">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:12}}>
+          <div className="sec-title" style={{marginBottom:0}}>📋 Riwayat Laporan</div>
+          <select className="f-inp" style={{width:"auto",minWidth:200}} value={filterStu} onChange={e=>setFilt(e.target.value)}>
+            <option value="">Semua Siswa</option>
+            {students.map(s=><option key={s}>{s}</option>)}
+          </select>
+        </div>
+        {filtered.length===0?(
+          <div className="empty"><div style={{fontSize:44,marginBottom:12}}>📂</div><div style={{color:"#6B7280"}}>Belum ada laporan tersimpan.</div></div>
+        ):filtered.map(r=><RCard key={r.id} r={r} onClick={()=>{setSel(r);setView("detail");}}/>)}
+      </div>}
+
+      {/* ── CHARTS ── */}
+      {view==="charts"&&<div className="fadein">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24,flexWrap:"wrap",gap:12}}>
+          <div className="sec-title" style={{marginBottom:0}}>📊 Grafik Perkembangan</div>
+          {students.length>0&&(
+            <select className="f-inp" style={{width:"auto",minWidth:200}} value={chartStu} onChange={e=>setChartStu(e.target.value)}>
+              {students.map(s=><option key={s}>{s}</option>)}
+            </select>
+          )}
+        </div>
+        {students.length===0?(
+          <div className="empty"><div style={{fontSize:44,marginBottom:12}}>📈</div><div style={{color:"#6B7280"}}>Tambahkan laporan dulu untuk melihat grafik.</div></div>
+        ):<>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12,marginBottom:20}}>
+            {[
+              {icon:"📝",lbl:"Total Sesi",val:cReports.length},
+              {icon:"⭐",lbl:"Rata-rata Pemahaman",val:cReports.length?(cReports.reduce((a,r)=>a+r.understanding,0)/cReports.length).toFixed(1):"-"},
+              {icon:"😊",lbl:"Rata-rata Semangat",val:cReports.length?(cReports.reduce((a,r)=>a+(MOOD_S[r.mood]||3),0)/cReports.length).toFixed(1)+"/5":"-"},
+              {icon:"⏱️",lbl:"Total Jam Belajar",val:cReports.length?Math.round(cReports.reduce((a,r)=>a+parseInt(r.duration||0),0)/60)+"j":"-"},
+            ].map((s,i)=>(
+              <div key={i} className="stat-card"><div className="stat-icon">{s.icon}</div><div className="stat-val" style={{fontSize:22}}>{s.val}</div><div className="stat-lbl">{s.lbl}</div></div>
+            ))}
+          </div>
+          {lineData.length>=2?(
+            <div className="chart-card">
+              <div className="chart-title">📈 Tren Pemahaman & Semangat</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={lineData} margin={{top:10,right:20,bottom:0,left:-10}}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F0EDE8"/>
+                  <XAxis dataKey="date" tick={{fontSize:11,fill:"#9CA3AF"}}/>
+                  <YAxis domain={[0,5]} ticks={[1,2,3,4,5]} tick={{fontSize:11,fill:"#9CA3AF"}}/>
+                  <Tooltip contentStyle={{borderRadius:10,border:"1px solid #E5E0D5"}}/>
+                  <Line type="monotone" dataKey="pemahaman" stroke="#2D6A4F" strokeWidth={2.5} dot={{r:4,fill:"#2D6A4F"}} name="Pemahaman"/>
+                  <Line type="monotone" dataKey="semangat"  stroke="#D4A853" strokeWidth={2.5} dot={{r:4,fill:"#D4A853"}} name="Semangat"/>
+                </LineChart>
+              </ResponsiveContainer>
+              <div className="legend">
+                <div className="legend-item"><span className="leg-dot" style={{background:"#2D6A4F"}}></span>Pemahaman</div>
+                <div className="legend-item"><span className="leg-dot" style={{background:"#D4A853"}}></span>Semangat</div>
+              </div>
+            </div>
+          ):(
+            <div className="chart-card" style={{textAlign:"center",color:"#9CA3AF",padding:32}}>Minimal 2 sesi untuk menampilkan grafik tren.</div>
+          )}
+          {radarData.length>=3&&(
+            <div className="chart-card">
+              <div className="chart-title">🕸️ Sebaran Mata Pelajaran</div>
+              <ResponsiveContainer width="100%" height={220}>
+                <RadarChart data={radarData}>
+                  <PolarGrid stroke="#E5E0D5"/>
+                  <PolarAngleAxis dataKey="subject" tick={{fontSize:11,fill:"#6B7280"}}/>
+                  <Radar dataKey="value" stroke="#2D6A4F" fill="#2D6A4F" fillOpacity={0.25}/>
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+          <div className="chart-card">
+            <div className="chart-title">📅 Riwayat Sesi</div>
+            <div style={{overflowX:"auto"}}>
+              <table className="ses-table">
+                <thead><tr>{["Tanggal","Mapel","Pemahaman","Kondisi","Foto","Durasi"].map(h=><th key={h}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {[...cReports].reverse().map(r=>{const nr=normR(r);return(
+                    <tr key={r.id} onClick={()=>{setSel(r);setView("detail");}}>
+                      <td>{fmtShort(r.date)}</td>
+                      <td><div style={{display:"flex",flexWrap:"wrap",gap:4}}>{getSubjs(nr).map(s=><span key={s} className="subj-badge">{s}</span>)}</div></td>
+                      <td>{stars(r.understanding)}</td>
+                      <td>{r.mood?.split(" ")[0]||"—"}</td>
+                      <td style={{color:nr.images.length?"#2D6A4F":"#9CA3AF"}}>{nr.images.length?`📷 ${nr.images.length}`:"—"}</td>
+                      <td style={{color:"#6B7280"}}>{r.duration}m</td>
+                    </tr>
+                  );})}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>}
+      </div>}
+
+      {/* ── DETAIL ── */}
+      {view==="detail"&&selected&&(()=>{const r=normR(selected);return(
+        <div className="fadein">
+          <button className="back-btn" onClick={()=>setView("history")}>← Kembali</button>
+          <div className="card">
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12,flexWrap:"wrap",gap:8}}>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {getSubjs(r).map(s=><span key={s} className="subj-badge" style={{padding:"4px 14px",fontSize:13}}>{s}</span>)}
+              </div>
+              <span style={{fontSize:13,color:"#6B7280"}}>{fmtDate(r.date)}</span>
+            </div>
+
+            <h2 style={{fontFamily:"'Lora',serif",fontSize:26,fontWeight:700,marginBottom:4}}>{r.studentName}</h2>
+            <div style={{fontSize:14,color:"#6B7280",marginBottom:r.updatedAt?6:22}}>Pengajar: {r.teacherName}</div>
+            {r.updatedAt&&(
+              <div style={{fontSize:12,color:"#9CA3AF",marginBottom:18,display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+                <span className="edited-badge">✏️ Pernah diedit</span>
+                <span>· Diubah {new Date(r.updatedAt).toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"})}</span>
+              </div>
+            )}
+
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:22}}>
+              {[["⏱️","Durasi",`${r.duration} menit`],["😊","Kondisi",r.mood||"—"],["⭐","Pemahaman",stars(r.understanding)]].map(([ic,lb,vl])=>(
+                <div key={lb} className="d-box"><div style={{fontSize:20,marginBottom:4}}>{ic}</div><div className="d-lbl">{lb}</div><div className="d-val">{vl}</div></div>
+              ))}
+            </div>
+
+            {r.topics&&<DBlock icon="📖" title="Materi yang Dipelajari" content={r.topics}/>}
+            {r.homework&&<DBlock icon="✏️" title="Tugas / PR" content={r.homework}/>}
+            {r.notes&&<DBlock icon="💬" title="Catatan untuk Orang Tua" content={r.notes} hl/>}
+            {r.nextSession&&<DBlock icon="📅" title="Rencana Pertemuan Berikutnya" content={r.nextSession}/>}
+
+            {/* Photo gallery */}
+            {r.images.length>0&&(
+              <div className="d-block">
+                <div className="d-block-title">📷 Foto Dokumentasi <span style={{color:"#9CA3AF",fontWeight:400,fontSize:12}}>({r.images.length} foto — klik untuk perbesar)</span></div>
+                <div className="img-gallery">
+                  {r.images.map((src,i)=>(
+                    <div key={i} className="img-gallery-item" onClick={()=>setLB(src)}>
+                      <img src={src} alt={`foto-${i+1}`}/>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{display:"flex",gap:10,marginTop:28,paddingTop:20,borderTop:"1px solid #E5E0D5",flexWrap:"wrap"}}>
+              <button className="btn-p" onClick={()=>openEdit(r)}>✏️ Edit</button>
+              <button className="btn-wa" onClick={()=>shareWA(r)}><span style={{fontSize:18}}>💬</span> WhatsApp</button>
+              <button className="btn-s" onClick={()=>downloadPDF(r)}>⬇️ Download PDF</button>
+              <button className="btn-danger" onClick={()=>deleteReport(r.id)}>🗑️ Hapus</button>
+            </div>
+          </div>
+        </div>
+      );})()}
+
+    </main>
+  </>);
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
